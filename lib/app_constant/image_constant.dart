@@ -1,5 +1,5 @@
 class ImageConstants {
-  static const BASE_IMG_PATH = "assets/icons/cat/";
+  static const BASE_IMG_PATH = "assets/images/";
 
   static final IMG_PATH_COFFEE = "${BASE_IMG_PATH}coffee.png";
   static final IMG_PATH_FAST_FOOD = "${BASE_IMG_PATH}fast-food.png";

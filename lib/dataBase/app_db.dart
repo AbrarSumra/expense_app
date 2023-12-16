@@ -3,6 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wscube_expense_app/Model/user_model.dart';
+import 'package:wscube_expense_app/model/expense_model.dart';
 
 class AppDataBase {
   AppDataBase._();
@@ -96,5 +97,42 @@ class AppDataBase {
         whereArgs: [email, pass]);
 
     return data.isNotEmpty;
+  }
+
+  Future<bool> addExpense(ExpenseModel newExpense) async {
+    var db = await getDb();
+
+    var rowEffected = await db.insert(EXPENSE_TABLE, newExpense.toMap());
+
+    return rowEffected > 0;
+  }
+
+  Future<List<ExpenseModel>> fetchAllExpense() async {
+    var db = await getDb();
+    var data = await db.query(EXPENSE_TABLE);
+
+    List<ExpenseModel> listExpense = [];
+
+    for (Map<String, dynamic> eachExp in data) {
+      listExpense.add(ExpenseModel.fromMap(eachExp));
+    }
+
+    return listExpense;
+  }
+
+  void updateExpense(ExpenseModel updateExpense) async {
+    var db = await getDb();
+
+    db.update(EXPENSE_TABLE, updateExpense.toMap(),
+        where: "$COLUMN_EXPENSE_ID = ?", whereArgs: [updateExpense.expId]);
+  }
+
+  Future<bool> deleteExpense(int id) async {
+    var db = await getDb();
+
+    var rowEffected = await db.delete(EXPENSE_TABLE,
+        where: "$COLUMN_EXPENSE_ID = ?", whereArgs: [id]);
+
+    return rowEffected > 0;
   }
 }

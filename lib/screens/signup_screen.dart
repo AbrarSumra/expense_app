@@ -1,9 +1,9 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../Constants/login_text_field.dart';
 import '../DataBase/app_db.dart';
 import '../Model/user_model.dart';
+import '../widget_constants/login_text_field.dart';
 import 'login_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -46,17 +46,17 @@ class SignUpScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
-                CstmTextField(
+                LoginTextField(
                   hintText: "Enter your name",
                   controller: nameController,
                 ),
                 const SizedBox(height: 10),
-                CstmTextField(
+                LoginTextField(
                   hintText: "Enter your email",
                   controller: emailController,
                 ),
                 const SizedBox(height: 10),
-                CstmTextField(
+                LoginTextField(
                   hintText: "Enter your password",
                   controller: passController,
                 ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CstmTextField extends StatelessWidget {
-  const CstmTextField({
+class LoginTextField extends StatelessWidget {
+  const LoginTextField({
     super.key,
     required this.hintText,
     required this.controller,

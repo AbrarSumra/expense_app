@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wscube_expense_app/Screens/signup_screen.dart';
-
-import '../Constants/login_text_field.dart';
+import 'package:wscube_expense_app/screens/home_page.dart';
 import '../DataBase/app_db.dart';
-import 'home_screen.dart';
+import '../widget_constants/login_text_field.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -70,12 +69,12 @@ class LoginScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                CstmTextField(
+                LoginTextField(
                   hintText: "Enter your email",
                   controller: emailController,
                 ),
                 const SizedBox(height: 10),
-                CstmTextField(
+                LoginTextField(
                   hintText: "Enter your password",
                   controller: passController,
                 ),
@@ -97,7 +96,7 @@ class LoginScreen extends StatelessWidget {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (ctx) => const HomeScreen()));
+                                  builder: (ctx) => const HomePage()));
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(

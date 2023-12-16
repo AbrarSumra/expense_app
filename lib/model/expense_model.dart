@@ -13,8 +13,8 @@ class ExpenseModel {
     required this.expCatType,
   });
 
-  String expId;
-  String uId;
+  int expId;
+  int uId;
   String expTitle;
   String expDesc;
   String expTimeStamp;

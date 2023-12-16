@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CstmTextField extends StatelessWidget {
-  const CstmTextField({
+class ExpenseTextField extends StatelessWidget {
+  const ExpenseTextField({
     super.key,
     required this.label,
     required this.iconData,
     this.keyboardType = TextInputType.text,
+    this.controller,
   });
 
   final String label;
   final IconData iconData;
   final TextInputType keyboardType;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {

@@ -63,42 +63,6 @@ class AppDataBase {
     );
   }
 
-  Future<int> getUID() async {
-    var prefs = await SharedPreferences.getInstance();
-    var uid = prefs.getInt(LOGIN_UID);
-    return uid ?? 0;
-  }
-
-  Future<bool> createAccount(UserModel newUser) async {
-    var check = await checkIfAlreadyExsits(newUser.user_email);
-
-    if (!check) {
-      var db = await getDb();
-      db.insert(USER_TABLE, newUser.toMap());
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<bool> checkIfAlreadyExsits(String email) async {
-    var db = await getDb();
-    var data = await db
-        .query(USER_TABLE, where: "$COLUMN_USER_EMAIL = ?", whereArgs: [email]);
-
-    return data.isNotEmpty;
-  }
-
-  Future<bool> authenticateUser(String email, String pass) async {
-    var db = await getDb();
-
-    var data = await db.query(USER_TABLE,
-        where: "$COLUMN_USER_EMAIL = ? and $COLUMN_USER_PASS = ?",
-        whereArgs: [email, pass]);
-
-    return data.isNotEmpty;
-  }
-
   Future<bool> addExpense(ExpenseModel newExpense) async {
     var db = await getDb();
 
@@ -134,5 +98,41 @@ class AppDataBase {
         where: "$COLUMN_EXPENSE_ID = ?", whereArgs: [id]);
 
     return rowEffected > 0;
+  }
+
+  Future<int> getUID() async {
+    var prefs = await SharedPreferences.getInstance();
+    var uid = prefs.getInt(LOGIN_UID);
+    return uid ?? 0;
+  }
+
+  Future<bool> createAccount(UserModel newUser) async {
+    var check = await checkIfAlreadyExsits(newUser.user_email);
+
+    if (!check) {
+      var db = await getDb();
+      db.insert(USER_TABLE, newUser.toMap());
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> checkIfAlreadyExsits(String email) async {
+    var db = await getDb();
+    var data = await db
+        .query(USER_TABLE, where: "$COLUMN_USER_EMAIL = ?", whereArgs: [email]);
+
+    return data.isNotEmpty;
+  }
+
+  Future<bool> authenticateUser(String email, String pass) async {
+    var db = await getDb();
+
+    var data = await db.query(USER_TABLE,
+        where: "$COLUMN_USER_EMAIL = ? and $COLUMN_USER_PASS = ?",
+        whereArgs: [email, pass]);
+
+    return data.isNotEmpty;
   }
 }

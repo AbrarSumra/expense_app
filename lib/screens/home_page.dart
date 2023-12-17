@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wscube_expense_app/exp_bloc/expense_bloc.dart';
-import 'package:wscube_expense_app/exp_bloc/expense_state.dart';
 import 'package:wscube_expense_app/screens/add_expense_screen.dart';
 
 import '../Screens/login_screen.dart';
@@ -43,43 +40,27 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: BlocBuilder<ExpenseBloc, ExpenseState>(
-        builder: (_, state) {
-          if (state is ExpenseLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
+      /*body: ListView.builder(
+          itemCount: AppConstants.mCategories.length,
+          itemBuilder: (context, index) {
+            var expenses = AppConstants.mCategories[index];
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.blue.shade100,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+              child: ListTile(
+                leading: Image.asset(expenses.catImgPath),
+                title: Text(
+                  expenses.catTitle,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+                subtitle: Text(expenses.catTitle),
+              ),
             );
-          }
-          if (state is ExpenseErrorState) {
-            return Center(
-              child: Text(state.errorMsg),
-            );
-          }
-          if (state is ExpenseLoadedState) {
-            var expData = state.loadData;
-            return ListView.builder(
-              itemCount: expData.length,
-              itemBuilder: (context, index) {
-                var expenses = expData[index];
-                return ListTile(
-                  title: Text(expenses.expTitle),
-                  subtitle: Text(expenses.expDesc),
-                  trailing: SizedBox(
-                    width: 100,
-                    child: Row(
-                      children: [
-                        Image.asset(expenses.expCatType),
-                        Text(expenses.expAmt),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          }
-          return Container();
-        },
-      ),
+          }),*/
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(

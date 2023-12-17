@@ -17,7 +17,7 @@ class AppConstants {
     ),
     CategoryModel(
       catId: 3,
-      catTitle: "Gft-Box",
+      catTitle: "Gift-Box",
       catImgPath: ImageConstants.IMG_PATH_GIFT_BOX,
     ),
     CategoryModel(

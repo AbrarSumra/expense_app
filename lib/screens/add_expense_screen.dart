@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:wscube_expense_app/exp_bloc/expense_bloc.dart';
+import 'package:wscube_expense_app/exp_bloc/expense_event.dart';
+import 'package:wscube_expense_app/model/expense_model.dart';
 
 import '../app_constant/content_constant.dart';
 import '../widget_constants/elevated_button.dart';
@@ -14,10 +18,11 @@ class AddExpense extends StatefulWidget {
 
 class _AddExpenseState extends State<AddExpense> {
   String selectedTransactionType = "Debit";
-  String elevatedBtnName = "Choose Date";
   var selectedCatIndex = -1;
 
-  final TextEditingController expenseController = TextEditingController();
+  DateTime expenseDate = DateTime.now();
+
+  final TextEditingController titleController = TextEditingController();
   final TextEditingController descController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
 
@@ -29,9 +34,9 @@ class _AddExpenseState extends State<AddExpense> {
       lastDate: DateTime.now(),
     );
 
-    if (selectedDate != null && selectedDate != DateTime.now()) {
+    if (selectedDate != null) {
       setState(() {
-        elevatedBtnName = DateFormat.yMMMMd().format(selectedDate);
+        expenseDate = selectedDate;
       });
     }
   }
@@ -39,7 +44,7 @@ class _AddExpenseState extends State<AddExpense> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade400,
+      backgroundColor: Colors.grey.shade300,
       appBar: AppBar(
         title: const Text("Add Expense"),
         backgroundColor: Colors.blue,
@@ -51,7 +56,7 @@ class _AddExpenseState extends State<AddExpense> {
             const SizedBox(height: 21),
             ExpenseTextField(
               label: "Name your expense",
-              controller: expenseController,
+              controller: titleController,
               iconData: Icons.abc,
             ),
             ExpenseTextField(
@@ -77,24 +82,26 @@ class _AddExpenseState extends State<AddExpense> {
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: DropdownButton(
-                      dropdownColor: Colors.blue,
-                      focusColor: Colors.white,
-                      value: selectedTransactionType,
-                      onChanged: (newValue) {
-                        setState(() {
-                          selectedTransactionType = newValue!;
-                        });
-                      },
-                      items: ["Debit", "Credit"].map((type) {
-                        return DropdownMenuItem(
-                          value: type,
-                          child: Text(
-                            type,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        );
-                      }).toList(),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                        dropdownColor: Colors.blue,
+                        focusColor: Colors.white,
+                        value: selectedTransactionType,
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedTransactionType = newValue!;
+                          });
+                        },
+                        items: ["Debit", "Credit"].map((type) {
+                          return DropdownMenuItem(
+                            value: type,
+                            child: Text(
+                              type,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 11),
@@ -160,7 +167,7 @@ class _AddExpenseState extends State<AddExpense> {
                     },
                   ),
                   CustomElevatedButton(
-                    name: elevatedBtnName,
+                    name: DateFormat.yMMMMd().format(expenseDate),
                     btnColor: Colors.white,
                     textColor: Colors.purple,
                     onTap: () {
@@ -171,7 +178,23 @@ class _AddExpenseState extends State<AddExpense> {
                     name: "ADD Expense",
                     btnColor: Colors.black,
                     textColor: Colors.white,
-                    onTap: () {},
+                    onTap: () {
+                      var newExpense = ExpenseModel(
+                        expId: 0,
+                        uId: 0,
+                        expTitle: titleController.text.toString(),
+                        expDesc: descController.text.toString(),
+                        expTimeStamp:
+                            expenseDate.millisecondsSinceEpoch.toString(),
+                        expAmt: int.parse(amountController.text.toString()),
+                        expBal: 0,
+                        expType: selectedTransactionType == "Debit" ? 0 : 1,
+                        expCatType: selectedCatIndex,
+                      );
+                      BlocProvider.of<ExpenseBloc>(context)
+                          .add(AddExpenseEvent(newExpense: newExpense));
+                      Navigator.pop(context);
+                    },
                   ),
                 ],
               ),

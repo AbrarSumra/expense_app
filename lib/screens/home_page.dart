@@ -223,7 +223,9 @@ class _HomePageState extends State<HomePage> {
                     background: Container(
                       alignment: AlignmentDirectional.centerEnd,
                       color: Colors.red,
-                      child: const Icon(Icons.delete_forever),
+                      child: const Center(
+                        child: Icon(Icons.delete_forever),
+                      ),
                     ),
                     child: ListTile(
                       /*onLongPress: () {

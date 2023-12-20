@@ -73,7 +73,8 @@ class AppDataBase {
 
   Future<List<ExpenseModel>> fetchAllExpense() async {
     var db = await getDb();
-    var data = await db.query(EXPENSE_TABLE);
+    var data = await db.query(EXPENSE_TABLE,
+        orderBy: "$COLUMN_EXPENSE_TIMESTAMP DESC");
 
     List<ExpenseModel> listExpense = [];
 

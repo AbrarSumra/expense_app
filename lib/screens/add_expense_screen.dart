@@ -10,7 +10,28 @@ import '../widget_constants/elevated_button.dart';
 import '../widget_constants/expense_text_field.dart';
 
 class AddExpense extends StatefulWidget {
-  const AddExpense({super.key});
+  const AddExpense({
+    super.key,
+    /* this.isUpdate = false,
+    this.expId = 0,
+    this.expTitle = "",
+    this.expDesc = "",
+    this.expTimeStamp = "",
+    this.expAmt = 0,
+    this.expBal = 0,
+    this.expType = 0,
+    this.expCatType = 0,*/
+  });
+
+  /* bool isUpdate;
+  int expId;
+  String expTitle;
+  String expDesc;
+  String expTimeStamp;
+  num expAmt;
+  num expBal;
+  int expType;
+  int expCatType;*/
 
   @override
   State<AddExpense> createState() => _AddExpenseState();
@@ -43,6 +64,10 @@ class _AddExpenseState extends State<AddExpense> {
 
   @override
   Widget build(BuildContext context) {
+    /* titleController.text = widget.expTitle;
+    descController.text = widget.expDesc;*/
+    //amountController.text = int.parse(widget.expAmt).toString();
+
     return Scaffold(
       backgroundColor: Colors.grey.shade300,
       appBar: AppBar(
@@ -179,20 +204,42 @@ class _AddExpenseState extends State<AddExpense> {
                     btnColor: Colors.black,
                     textColor: Colors.white,
                     onTap: () {
-                      var newExpense = ExpenseModel(
-                        expId: 0,
-                        uId: 0,
-                        expTitle: titleController.text.toString(),
-                        expDesc: descController.text.toString(),
-                        expTimeStamp:
-                            expenseDate.millisecondsSinceEpoch.toString(),
-                        expAmt: int.parse(amountController.text.toString()),
-                        expBal: 0,
-                        expType: selectedTransactionType == "Debit" ? 0 : 1,
-                        expCatType: selectedCatIndex,
-                      );
-                      BlocProvider.of<ExpenseBloc>(context)
-                          .add(AddExpenseEvent(newExpense: newExpense));
+                      if (titleController.text.isNotEmpty &&
+                          descController.text.isNotEmpty &&
+                          amountController.text.isNotEmpty &&
+                          selectedCatIndex != -1) {
+                        /*if (widget.isUpdate) {
+                          ///
+                          var updateExpense = ExpenseModel(
+                            expId: widget.expId,
+                            uId: 0,
+                            expTitle: titleController.text.toString(),
+                            expDesc: descController.text.toString(),
+                            expTimeStamp: widget.expTimeStamp,
+                            expAmt: widget.expAmt,
+                            expBal: 0,
+                            expType: widget.expType,
+                            expCatType: widget.expCatType,
+                          );
+                          BlocProvider.of<ExpenseBloc>(context).add(
+                              UpdateExpenseEvent(updateExpense: updateExpense));
+                        } else {*/
+                        var newExpense = ExpenseModel(
+                          expId: 0,
+                          uId: 0,
+                          expTitle: titleController.text.toString(),
+                          expDesc: descController.text.toString(),
+                          expTimeStamp:
+                              expenseDate.millisecondsSinceEpoch.toString(),
+                          expAmt: int.parse(amountController.text.toString()),
+                          expBal: 0,
+                          expType: selectedTransactionType == "Debit" ? 0 : 1,
+                          expCatType: selectedCatIndex,
+                        );
+                        BlocProvider.of<ExpenseBloc>(context)
+                            .add(AddExpenseEvent(newExpense: newExpense));
+                        //},
+                      }
                       Navigator.pop(context);
                     },
                   ),

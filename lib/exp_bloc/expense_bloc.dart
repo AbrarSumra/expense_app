@@ -27,15 +27,15 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     });
 
     /// Update Expense
-    /*on<UpdateExpenseEvent>((event, emit) async {
+    on<UpdateExpenseEvent>((event, emit) async {
       emit(ExpenseLoadingState());
       db.updateExpense(event.updateExpense);
       var mExp = await db.fetchAllExpense();
       emit(ExpenseLoadedState(loadData: mExp));
-    });*/
+    });
 
     /// Delete Expense
-    /*on<DeleteExpenseEvent>((event, emit) async {
+    on<DeleteExpenseEvent>((event, emit) async {
       emit(ExpenseLoadingState());
       var check = await db.deleteExpense(event.id);
       if (check) {
@@ -44,6 +44,6 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       } else {
         emit(ExpenseErrorState(errorMsg: "Expense not added!!!"));
       }
-    });*/
+    });
   }
 }

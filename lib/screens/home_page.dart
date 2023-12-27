@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wscube_expense_app/app_constant/content_constant.dart';
 import 'package:wscube_expense_app/app_constant/date_utils.dart';
@@ -25,6 +26,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     BlocProvider.of<ExpenseBloc>(context).add(FetchAllExpenseEvent());
+  }
+
+  Future<void> _handleRefresh() async {
+    return await Future.delayed(Duration(seconds: 2));
   }
 
   @override
@@ -184,125 +189,129 @@ class _HomePageState extends State<HomePage> {
   /// List of Expense
   Widget listOfExpense(List<DateWiseExpenseModel> dateWiseExpense) {
     var isDark = Theme.of(context).brightness == Brightness.dark;
-    return ListView.builder(
-      itemCount: dateWiseExpense.length,
-      itemBuilder: (ctx, parentIndex) {
-        var eachItem = dateWiseExpense[parentIndex];
+    return LiquidPullToRefresh(
+      onRefresh: _handleRefresh,
+      color: Colors.purple,
+      child: ListView.builder(
+        itemCount: dateWiseExpense.length,
+        itemBuilder: (ctx, parentIndex) {
+          var eachItem = dateWiseExpense[parentIndex];
 
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
-              child: Container(
-                color: Colors.grey.shade700,
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      eachItem.date,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      eachItem.totalAmount,
-                      style: const TextStyle(
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
+                child: Container(
+                  color: Colors.grey.shade700,
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        eachItem.date,
+                        style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 18,
-                          color: Colors.white),
-                    ),
-                  ],
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        eachItem.totalAmount,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                            color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            ListView.builder(
-              itemCount: eachItem.allTransaction.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (_, childIndex) {
-                var eachTrans = eachItem.allTransaction[childIndex];
+              ListView.builder(
+                itemCount: eachItem.allTransaction.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (_, childIndex) {
+                  var eachTrans = eachItem.allTransaction[childIndex];
 
-                return Container(
-                  margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.blue : Colors.blue.shade200,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Dismissible(
-                    key: Key(eachItem.date),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      BlocProvider.of<ExpenseBloc>(context)
-                          .add(DeleteExpenseEvent(id: eachTrans.expId));
-                    },
-                    background: Container(
-                      alignment: AlignmentDirectional.centerEnd,
-                      color: Colors.red,
-                      child: const Center(
-                        child: Icon(Icons.delete_forever),
-                      ),
+                  return Container(
+                    margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.blue : Colors.blue.shade200,
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                    child: ListTile(
-                      onLongPress: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) => const AddExpense(
-                                    /*isUpdate: true,
-                                      expTitle: eachTrans.expTitle,
-                                      expDesc: eachTrans.expDesc,
-                                      expAmt: eachTrans.expAmt,
-                                      expCatType: eachTrans.expCatType,
-                                      expId: eachTrans.expId,
-                                      expTimeStamp: eachTrans.expTimeStamp,
-                                      expType: eachTrans.expType,*/
-                                    )));
+                    child: Dismissible(
+                      key: Key(eachItem.date),
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) {
+                        BlocProvider.of<ExpenseBloc>(context)
+                            .add(DeleteExpenseEvent(id: eachTrans.expId));
                       },
-                      leading: Image.asset(
-                        AppConstants
-                            .mCategories[eachTrans.expCatType].catImgPath,
-                        height: 45,
-                        width: 45,
-                      ),
-                      title: Text(
-                        eachTrans.expTitle,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: isDark ? Colors.white : Colors.black,
+                      background: Container(
+                        alignment: AlignmentDirectional.centerEnd,
+                        color: Colors.red,
+                        child: const Center(
+                          child: Icon(Icons.delete_forever),
                         ),
                       ),
-                      subtitle: Text(
-                        eachTrans.expDesc,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                          color: isDark ? Colors.white : Colors.black,
+                      child: ListTile(
+                        onLongPress: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (ctx) => const AddExpense(
+                                      /*isUpdate: true,
+                                        expTitle: eachTrans.expTitle,
+                                        expDesc: eachTrans.expDesc,
+                                        expAmt: eachTrans.expAmt,
+                                        expCatType: eachTrans.expCatType,
+                                        expId: eachTrans.expId,
+                                        expTimeStamp: eachTrans.expTimeStamp,
+                                        expType: eachTrans.expType,*/
+                                      )));
+                        },
+                        leading: Image.asset(
+                          AppConstants
+                              .mCategories[eachTrans.expCatType].catImgPath,
+                          height: 45,
+                          width: 45,
                         ),
-                      ),
-                      trailing: Column(
-                        children: [
-                          Text(
-                            eachTrans.expAmt.toString(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
-                              color: isDark ? Colors.white : Colors.black,
-                            ),
+                        title: Text(
+                          eachTrans.expTitle,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: isDark ? Colors.white : Colors.black,
                           ),
-                        ],
+                        ),
+                        subtitle: Text(
+                          eachTrans.expDesc,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        trailing: Column(
+                          children: [
+                            Text(
+                              eachTrans.expAmt.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
-        );
-      },
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 

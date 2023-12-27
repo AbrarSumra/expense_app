@@ -108,7 +108,7 @@ class AppDataBase {
   }
 
   Future<bool> createAccount(UserModel newUser) async {
-    var check = await checkIfAlreadyExsits(newUser.user_email);
+    var check = await checkIfAlreadyExists(newUser.user_email);
 
     if (!check) {
       var db = await getDb();
@@ -119,7 +119,7 @@ class AppDataBase {
     }
   }
 
-  Future<bool> checkIfAlreadyExsits(String email) async {
+  Future<bool> checkIfAlreadyExists(String email) async {
     var db = await getDb();
     var data = await db
         .query(USER_TABLE, where: "$COLUMN_USER_EMAIL = ?", whereArgs: [email]);

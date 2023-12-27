@@ -27,8 +27,8 @@ class AppConstants {
     ),
     CategoryModel(
       catId: 5,
-      catTitle: "Hot-Pot",
-      catImgPath: ImageConstants.IMG_PATH_HOT_POT,
+      catTitle: "Movie",
+      catImgPath: ImageConstants.IMG_PATH_MOVIE,
     ),
     CategoryModel(
       catId: 6,
@@ -57,13 +57,13 @@ class AppConstants {
     ),
     CategoryModel(
       catId: 11,
-      catTitle: "Shopping-Bag",
-      catImgPath: ImageConstants.IMG_PATH_SHOPPING_BAG,
+      catTitle: "Shopping",
+      catImgPath: ImageConstants.IMG_PATH_SHOPPING,
     ),
     CategoryModel(
       catId: 12,
-      catTitle: "Smartphone",
-      catImgPath: ImageConstants.IMG_PATH_SMARTPHONE,
+      catTitle: "Petrol",
+      catImgPath: ImageConstants.IMG_PATH_PETROL,
     ),
     CategoryModel(
       catId: 13,

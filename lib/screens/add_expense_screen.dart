@@ -12,7 +12,7 @@ import '../widget_constants/expense_text_field.dart';
 class AddExpense extends StatefulWidget {
   const AddExpense({
     super.key,
-    /* this.isUpdate = false,
+    /*this.isUpdate = false,
     this.expId = 0,
     this.expTitle = "",
     this.expDesc = "",
@@ -23,7 +23,7 @@ class AddExpense extends StatefulWidget {
     this.expCatType = 0,*/
   });
 
-  /* bool isUpdate;
+  /*bool isUpdate;
   int expId;
   String expTitle;
   String expDesc;
@@ -64,9 +64,9 @@ class _AddExpenseState extends State<AddExpense> {
 
   @override
   Widget build(BuildContext context) {
-    /* titleController.text = widget.expTitle;
-    descController.text = widget.expDesc;*/
-    //amountController.text = int.parse(widget.expAmt).toString();
+    //titleController.text = widget.expTitle;
+    //descController.text = widget.expDesc;
+    //amountController.text = widget.expAmt.toString();
 
     return Scaffold(
       backgroundColor: Colors.grey.shade300,
@@ -200,49 +200,31 @@ class _AddExpenseState extends State<AddExpense> {
                     },
                   ),
                   CustomElevatedButton(
-                    name: "ADD Expense",
-                    btnColor: Colors.black,
-                    textColor: Colors.white,
-                    onTap: () {
-                      if (titleController.text.isNotEmpty &&
-                          descController.text.isNotEmpty &&
-                          amountController.text.isNotEmpty &&
-                          selectedCatIndex != -1) {
-                        /*if (widget.isUpdate) {
-                          ///
-                          var updateExpense = ExpenseModel(
-                            expId: widget.expId,
+                      name: "ADD Expense",
+                      btnColor: Colors.black,
+                      textColor: Colors.white,
+                      onTap: () {
+                        if (titleController.text.isNotEmpty &&
+                            descController.text.isNotEmpty &&
+                            amountController.text.isNotEmpty &&
+                            selectedCatIndex != -1) {
+                          var newExpense = ExpenseModel(
+                            expId: 0,
                             uId: 0,
                             expTitle: titleController.text.toString(),
                             expDesc: descController.text.toString(),
-                            expTimeStamp: widget.expTimeStamp,
-                            expAmt: widget.expAmt,
+                            expTimeStamp:
+                                expenseDate.millisecondsSinceEpoch.toString(),
+                            expAmt: int.parse(amountController.text.toString()),
                             expBal: 0,
-                            expType: widget.expType,
-                            expCatType: widget.expCatType,
+                            expType: selectedTransactionType == "Debit" ? 0 : 1,
+                            expCatType: selectedCatIndex,
                           );
-                          BlocProvider.of<ExpenseBloc>(context).add(
-                              UpdateExpenseEvent(updateExpense: updateExpense));
-                        } else {*/
-                        var newExpense = ExpenseModel(
-                          expId: 0,
-                          uId: 0,
-                          expTitle: titleController.text.toString(),
-                          expDesc: descController.text.toString(),
-                          expTimeStamp:
-                              expenseDate.millisecondsSinceEpoch.toString(),
-                          expAmt: int.parse(amountController.text.toString()),
-                          expBal: 0,
-                          expType: selectedTransactionType == "Debit" ? 0 : 1,
-                          expCatType: selectedCatIndex,
-                        );
-                        BlocProvider.of<ExpenseBloc>(context)
-                            .add(AddExpenseEvent(newExpense: newExpense));
-                        //},
-                      }
-                      Navigator.pop(context);
-                    },
-                  ),
+                          BlocProvider.of<ExpenseBloc>(context)
+                              .add(AddExpenseEvent(newExpense: newExpense));
+                          Navigator.pop(context);
+                        }
+                      }),
                 ],
               ),
             )

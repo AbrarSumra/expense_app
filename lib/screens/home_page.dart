@@ -6,6 +6,7 @@ import 'package:wscube_expense_app/app_constant/date_utils.dart';
 import 'package:wscube_expense_app/exp_bloc/expense_bloc.dart';
 import 'package:wscube_expense_app/exp_bloc/expense_event.dart';
 import 'package:wscube_expense_app/exp_bloc/expense_state.dart';
+import 'package:wscube_expense_app/provider/theme_provider.dart';
 import 'package:wscube_expense_app/screens/add_expense_screen.dart';
 
 import '../Screens/login_screen.dart';
@@ -29,13 +30,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var mQuery = MediaQuery.of(context);
-    var mWidth = mQuery.size.width;
-    var mHeight = mQuery.size.height;
+    //var mWidth = mQuery.size.width;
+    //var mHeight = mQuery.size.height;
+    var isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? Colors.white10 : Colors.white,
       appBar: AppBar(
         title: const Text("HomeScreen"),
-        backgroundColor: Colors.blue,
+        backgroundColor: isDark ? Colors.grey.shade800 : Colors.blue,
       ),
       drawer: Drawer(
         child: SafeArea(
@@ -43,6 +46,15 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 21),
+              SwitchListTile(
+                title: const Text("Dark Mode"),
+                subtitle: const Text("Control theme of App from here"),
+                value: context.watch<ThemeProvider>().themeValue,
+                onChanged: (value) {
+                  context.read<ThemeProvider>().themeValue = value;
+                  Navigator.pop(context);
+                },
+              ),
               TextButton.icon(
                 onPressed: () async {
                   Navigator.pushReplacement(context,
@@ -58,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                   "Log out",
                   style: TextStyle(color: Colors.blue),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -87,13 +99,15 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: isDark ? Colors.white : Colors.black,
         onPressed: () {
           Navigator.push(
               context, MaterialPageRoute(builder: (ctx) => const AddExpense()));
         },
-        child: const Icon(
+        child: Icon(
           Icons.add,
           size: 35,
+          color: isDark ? Colors.black : Colors.white,
         ),
       ),
     );
@@ -101,13 +115,14 @@ class _HomePageState extends State<HomePage> {
 
   /// Portrait Layout
   Widget portraitLayout(List<DateWiseExpenseModel> dateWiseExpense) {
+    var isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         Expanded(
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.grey.shade400,
+              color: isDark ? Colors.blue : Colors.grey.shade400,
             ),
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -117,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontSize: 27, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "0.0",
+                  "10000.0",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
                 ),
               ],
@@ -134,13 +149,14 @@ class _HomePageState extends State<HomePage> {
 
   /// Landscape Layout
   Widget landscapeLayout(List<DateWiseExpenseModel> dateWiseExpense) {
+    var isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         Expanded(
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.grey.shade400,
+              color: isDark ? Colors.black : Colors.grey.shade400,
             ),
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -150,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontSize: 27, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "0.0",
+                  "10000.0",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
                 ),
               ],
@@ -167,6 +183,7 @@ class _HomePageState extends State<HomePage> {
 
   /// List of Expense
   Widget listOfExpense(List<DateWiseExpenseModel> dateWiseExpense) {
+    var isDark = Theme.of(context).brightness == Brightness.dark;
     return ListView.builder(
       itemCount: dateWiseExpense.length,
       itemBuilder: (ctx, parentIndex) {
@@ -185,9 +202,10 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       eachItem.date,
                       style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
-                          color: Colors.white),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
                     ),
                     Text(
                       eachItem.totalAmount,
@@ -210,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                 return Container(
                   margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade200,
+                    color: isDark ? Colors.blue : Colors.blue.shade200,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Dismissible(
@@ -228,22 +246,21 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     child: ListTile(
-                      /*onLongPress: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (ctx) => AddExpense(
-                                              isUpdate: true,
-                                              expTitle: eachTrans.expTitle,
-                                              expDesc: eachTrans.expDesc,
-                                              expAmt: eachTrans.expAmt,
-                                              expCatType: eachTrans.expCatType,
-                                              expId: eachTrans.expId,
-                                              expTimeStamp:
-                                                  eachTrans.expTimeStamp,
-                                              expType: eachTrans.expType,
-                                            )));
-                              },*/
+                      onLongPress: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) => const AddExpense(
+                                    /*isUpdate: true,
+                                      expTitle: eachTrans.expTitle,
+                                      expDesc: eachTrans.expDesc,
+                                      expAmt: eachTrans.expAmt,
+                                      expCatType: eachTrans.expCatType,
+                                      expId: eachTrans.expId,
+                                      expTimeStamp: eachTrans.expTimeStamp,
+                                      expType: eachTrans.expType,*/
+                                    )));
+                      },
                       leading: Image.asset(
                         AppConstants
                             .mCategories[eachTrans.expCatType].catImgPath,
@@ -252,25 +269,28 @@ class _HomePageState extends State<HomePage> {
                       ),
                       title: Text(
                         eachTrans.expTitle,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
+                          color: isDark ? Colors.white : Colors.black,
                         ),
                       ),
                       subtitle: Text(
                         eachTrans.expDesc,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 15,
+                          color: isDark ? Colors.white : Colors.black,
                         ),
                       ),
                       trailing: Column(
                         children: [
                           Text(
                             eachTrans.expAmt.toString(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 15,
+                              color: isDark ? Colors.white : Colors.black,
                             ),
                           ),
                         ],

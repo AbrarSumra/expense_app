@@ -11,9 +11,10 @@ class AddExpenseEvent extends ExpenseEvent {
 class FetchAllExpenseEvent extends ExpenseEvent {}
 
 class UpdateExpenseEvent extends ExpenseEvent {
-  UpdateExpenseEvent({required this.updateExpense});
+  UpdateExpenseEvent({required this.updateExpense, required this.index});
 
   ExpenseModel updateExpense;
+  int index;
 }
 
 class DeleteExpenseEvent extends ExpenseEvent {

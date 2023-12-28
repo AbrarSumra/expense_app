@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class ExpenseTextField extends StatelessWidget {
   const ExpenseTextField({
@@ -22,25 +21,27 @@ class ExpenseTextField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
+        style: const TextStyle(color: Colors.black),
+        cursorColor: Colors.black,
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
-            borderSide: const BorderSide(color: Colors.white),
+            borderSide: const BorderSide(color: Colors.white, width: 2),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
-            borderSide: const BorderSide(color: Colors.blue),
+            borderSide: const BorderSide(color: Colors.blue, width: 2),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
-            borderSide: const BorderSide(color: Colors.blue),
+            borderSide: const BorderSide(color: Colors.orange, width: 2),
           ),
           label: Text(
             label,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 21,
               fontWeight: FontWeight.w500,
               color: Colors.blue,
             ),
@@ -48,6 +49,7 @@ class ExpenseTextField extends StatelessWidget {
           suffixIcon: Icon(
             iconData,
             size: 30,
+            color: Colors.black,
           ),
         ),
       ),

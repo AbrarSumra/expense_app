@@ -22,6 +22,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  num lastBalance = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -29,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _handleRefresh() async {
-    return await Future.delayed(Duration(seconds: 2));
+    return await Future.delayed(const Duration(seconds: 2));
   }
 
   @override
@@ -42,18 +44,30 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: isDark ? Colors.white10 : Colors.white,
       appBar: AppBar(
-        title: const Text("HomeScreen"),
+        title: const Text(
+          "HomeScreen",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: isDark ? Colors.grey.shade800 : Colors.blue,
       ),
       drawer: Drawer(
+        backgroundColor: isDark ? Colors.black : Colors.white,
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 21),
               SwitchListTile(
-                title: const Text("Dark Mode"),
-                subtitle: const Text("Control theme of App from here"),
+                title: Text(
+                  "Dark Mode",
+                  style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w500),
+                ),
+                subtitle: Text(
+                  "Control theme of App from here",
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                ),
                 value: context.watch<ThemeProvider>().themeValue,
                 onChanged: (value) {
                   context.read<ThemeProvider>().themeValue = value;
@@ -93,11 +107,25 @@ class _HomePageState extends State<HomePage> {
             );
           }
           if (state is ExpenseLoadedState) {
-            var dateWiseExpense = filterDateWiseExpense(state.loadData);
+            if (state.loadData.isNotEmpty) {
+              updateBalance(state.loadData);
+              var dateWiseExpense = filterDateWiseExpense(state.loadData);
 
-            return mQuery.orientation == Orientation.landscape
-                ? landscapeLayout(dateWiseExpense)
-                : portraitLayout(dateWiseExpense);
+              return mQuery.orientation == Orientation.landscape
+                  ? landscapeLayout(dateWiseExpense, isDark)
+                  : portraitLayout(dateWiseExpense, isDark);
+            } else {
+              return Center(
+                child: Text(
+                  "No Expense yet!!!",
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+            }
           }
 
           return Container();
@@ -107,7 +135,11 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: isDark ? Colors.white : Colors.black,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (ctx) => const AddExpense()));
+              context,
+              MaterialPageRoute(
+                  builder: (ctx) => AddExpense(
+                        balance: lastBalance,
+                      )));
         },
         child: Icon(
           Icons.add,
@@ -118,31 +150,29 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Update Balance
+  void updateBalance(List<ExpenseModel> mData) {
+    var lastTransactionId = -1;
+
+    for (ExpenseModel exp in mData) {
+      if (exp.expId > lastTransactionId) {
+        lastTransactionId = exp.expId;
+      }
+    }
+
+    var lastExpenseBalance = mData
+        .firstWhere((element) => element.expId == lastTransactionId)
+        .expBal;
+    lastBalance = lastExpenseBalance;
+  }
+
   /// Portrait Layout
-  Widget portraitLayout(List<DateWiseExpenseModel> dateWiseExpense) {
-    var isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget portraitLayout(
+      List<DateWiseExpenseModel> dateWiseExpense, bool isDark) {
     return Column(
       children: [
         Expanded(
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: isDark ? Colors.blue : Colors.grey.shade400,
-            ),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Your balance till now",
-                  style: TextStyle(fontSize: 27, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "10000.0",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
-                ),
-              ],
-            ),
-          ),
+          child: balanceHeader(isDark),
         ),
         Expanded(
           flex: 2,
@@ -153,36 +183,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Landscape Layout
-  Widget landscapeLayout(List<DateWiseExpenseModel> dateWiseExpense) {
-    var isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget landscapeLayout(
+      List<DateWiseExpenseModel> dateWiseExpense, bool isDark) {
     return Row(
       children: [
         Expanded(
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: isDark ? Colors.black : Colors.grey.shade400,
-            ),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Your balance till now",
-                  style: TextStyle(fontSize: 27, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "10000.0",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
-                ),
-              ],
-            ),
-          ),
+          child: balanceHeader(isDark),
         ),
         Expanded(
           flex: 2,
           child: listOfExpense(dateWiseExpense),
         ),
       ],
+    );
+  }
+
+  /// BalanceHeader
+  Widget balanceHeader(isDark) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: isDark ? Colors.black54 : Colors.grey.shade400,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "Your balance till now",
+            style: TextStyle(fontSize: 27, fontWeight: FontWeight.w500),
+          ),
+          Text(
+            "$lastBalance",
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
+          ),
+        ],
+      ),
     );
   }
 
@@ -254,21 +289,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       child: ListTile(
-                        onLongPress: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => const AddExpense(
-                                      /*isUpdate: true,
-                                        expTitle: eachTrans.expTitle,
-                                        expDesc: eachTrans.expDesc,
-                                        expAmt: eachTrans.expAmt,
-                                        expCatType: eachTrans.expCatType,
-                                        expId: eachTrans.expId,
-                                        expTimeStamp: eachTrans.expTimeStamp,
-                                        expType: eachTrans.expType,*/
-                                      )));
-                        },
                         leading: Image.asset(
                           AppConstants
                               .mCategories[eachTrans.expCatType].catImgPath,
@@ -295,6 +315,14 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Text(
                               eachTrans.expAmt.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            Text(
+                              eachTrans.expBal.toString(),
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 15,

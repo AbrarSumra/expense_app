@@ -10,28 +10,9 @@ import '../widget_constants/elevated_button.dart';
 import '../widget_constants/expense_text_field.dart';
 
 class AddExpense extends StatefulWidget {
-  const AddExpense({
-    super.key,
-    /*this.isUpdate = false,
-    this.expId = 0,
-    this.expTitle = "",
-    this.expDesc = "",
-    this.expTimeStamp = "",
-    this.expAmt = 0,
-    this.expBal = 0,
-    this.expType = 0,
-    this.expCatType = 0,*/
-  });
+  const AddExpense({required this.balance, super.key});
 
-  /*bool isUpdate;
-  int expId;
-  String expTitle;
-  String expDesc;
-  String expTimeStamp;
-  num expAmt;
-  num expBal;
-  int expType;
-  int expCatType;*/
+  final num balance;
 
   @override
   State<AddExpense> createState() => _AddExpenseState();
@@ -64,14 +45,24 @@ class _AddExpenseState extends State<AddExpense> {
 
   @override
   Widget build(BuildContext context) {
-    //titleController.text = widget.expTitle;
-    //descController.text = widget.expDesc;
-    //amountController.text = widget.expAmt.toString();
+    var isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade300,
+      backgroundColor: isDark ? Colors.white10 : Colors.grey.shade500,
       appBar: AppBar(
-        title: const Text("Add Expense"),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
+          ),
+        ),
+        title: const Text(
+          "Add Expense",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
@@ -204,6 +195,16 @@ class _AddExpenseState extends State<AddExpense> {
                       btnColor: Colors.black,
                       textColor: Colors.white,
                       onTap: () {
+                        var mBalance = widget.balance;
+
+                        if (selectedTransactionType == "Debit") {
+                          mBalance -=
+                              int.parse(amountController.text.toString());
+                        } else {
+                          mBalance +=
+                              int.parse(amountController.text.toString());
+                        }
+
                         if (titleController.text.isNotEmpty &&
                             descController.text.isNotEmpty &&
                             amountController.text.isNotEmpty &&
@@ -216,7 +217,7 @@ class _AddExpenseState extends State<AddExpense> {
                             expTimeStamp:
                                 expenseDate.millisecondsSinceEpoch.toString(),
                             expAmt: int.parse(amountController.text.toString()),
-                            expBal: 0,
+                            expBal: mBalance,
                             expType: selectedTransactionType == "Debit" ? 0 : 1,
                             expCatType: selectedCatIndex,
                           );

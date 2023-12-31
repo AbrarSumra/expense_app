@@ -1,4 +1,4 @@
-import '../Model/cat_model.dart';
+import '../model/cat_model.dart';
 import 'image_constant.dart';
 
 class AppConstants {
